@@ -6,9 +6,41 @@
 class Vec3d
 {
 public:
+	Vec3d() { x = 0; y = 0; z = 0; };
+
 	float x, y, z;
 };
 
+class particle 
+{
+public:
+	particle() {};
+
+	Vec3d pos;
+	Vec3d speed;
+	Vec3d acc;
+};
+
+void Verlet(particle input_part, particle previous_part, particle& output_part, Vec3d force) {
+
+	float dt = 1.0f / 30.0f; //We assume 30 fps logic for now
+
+
+	output_part.acc.x	=  input_part.acc.x; //MRUA for now
+
+	output_part.speed.x = input_part.speed.x + input_part.acc.x * dt;
+
+	output_part.pos.x	= input_part.pos.x + input_part.speed.x * dt + 0.5f * input_part.acc.x * dt * dt;
+
+
+
+	
+	return;
+}
+
+
+
+/*
 void Verlet(Vec3d pos_i, Vec3d v_i, Vec3d& pos_f, Vec3d& v_f, float dt)
 {
 
@@ -24,42 +56,52 @@ void Verlet(Vec3d pos_i, Vec3d v_i, Vec3d& pos_f, Vec3d& v_f, float dt)
 	v_f.y = pos_f.y - pos_i.y;
 	v_f.z = pos_f.z - pos_i.z;
 
-}
+}*/
 
 using namespace std;
 int main() {
 
 
 	Vec3d position;
-	position.x = 420.69f;
+	position.x = 100;
 	position.y = 0.0f;
 	position.z = 0.0f;
 
 	Vec3d velocity;
-	velocity.x = 420.69f;
-	velocity.y = 69.69f;
+	velocity.x = 16.0f;
+	velocity.y = 0.0f;
 	velocity.z = 0.0f;
 
-	Vec3d position_f, velocity_f;
+	Vec3d acceleration;
+	acceleration.x = 64.0f;
+	acceleration.y = 0.0f;
+	acceleration.z = 0.0f;
 
-	int tmp = 0;
-	cout << "Input number of steps:";
-	cin >> tmp;
+
+	particle part_in;
+	part_in.acc = acceleration;
+	part_in.pos = position;
+	part_in.speed = velocity;
 	
-	Verlet(position, velocity, position_f, velocity_f, tmp);
+	particle part_out;
+	particle part_prev;
+	
+	Vec3d force;
+
+	Verlet(part_in, part_prev, part_out, force);
+
+	cout << "---------Input----------" << endl;
+	cout << "POSITION: " << "x: " << part_in.pos.x << "  y: " << part_in.pos.y << "  z: " << part_in.pos.z << endl;
+	cout << "SPEED: " << "x: " << part_in.speed.x << "  y: " << part_in.speed.y << "  z: " << part_in.speed.z << endl;
+	cout << "ACCELERATION: " << "x: " << part_in.acc.x << "  y: " << part_in.acc.y << "  z: " << part_in.acc.z << endl << endl;
 
 
-	cout << "---------Initial position----------" << endl;
-	cout << "x: " << position.x << "  y: " << position.y << "  z: " << position.x << endl << endl;
+	cout << "---------Output----------" << endl;
+	cout << "POSITION: "<< "x: " << part_out.pos.x << "  y: " << part_out.pos.y << "  z: " << part_out.pos.z << endl;
+	cout << "SPEED: " << "x: " << part_out.speed.x << "  y: " << part_out.speed.y << "  z: " << part_out.speed.z << endl;
+	cout << "ACCELERATION: " << "x: " << part_out.acc.x << "  y: " << part_out.acc.y << "  z: " << part_out.acc.z << endl << endl;
 
-	cout << "---------Initial velocity----------" << endl;
-	cout << "x: " << velocity.x << "  y: " << velocity.y << "  z: " << velocity.x << endl << endl;
 
-	cout << "---------Final position----------" << endl;
-	cout << "x: " << position_f.x << "  y: " << position_f.y << "  z: " << position_f.x << endl << endl;
-
-	cout << "---------Final velocity----------" << endl;
-	cout << "x: " << velocity_f.x << "  y: " << velocity_f.y << "  z: " << velocity_f.x << endl << endl;
 
 
 	system("pause");
