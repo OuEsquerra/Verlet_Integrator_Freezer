@@ -15,6 +15,11 @@
 #include "sdl_functions.h"
 #include "j1PerfTimer.h"
 #include "j1Timer.h"
+#include "Log.h"
+#include "Verlet.h"
+
+#include "SDL/include/SDL.h"
+#include "SDL_image/include/SDL_image.h"
 
 struct Ball
 {
@@ -24,22 +29,14 @@ struct Ball
 	float vx, vy;     // velocity in the world
 };
 
-j1PerfTimer			ptimer;
-j1PerfTimer			delay_timer;
-int				frame_count = 0;
-j1Timer				startup_time;
-j1Timer				frame_time;
-j1Timer				last_sec_frame_time;
-int				last_sec_frame_count = 0;
-int				prev_last_sec_frame_count = 0;
-int					frame_rate;
-
 int main(int argc, char* argv[])
 {
 	// Initialize SDL
 	if (Init() == 0) {
 		return 1;
 	}
+
+	
 
 	// Load a texture
 	SDL_Texture *texScreen = LoadTexture("Assets/Screens/spacee.png");
@@ -52,18 +49,46 @@ int main(int argc, char* argv[])
 		0, 0              // Initial velocity
 	};
 
+	//Ball particle
+	particle ball_p;
+	ball_p.pos.x = 450;
+	ball_p.pos.y = 100;
+	ball_p.acc.y = 980.0f;
+	ball_p.speed.x = 200.0f;
 
 
+	particle tmp;
+
+	Vec3d force;
+
+	//FPS control
+	j1PerfTimer			ptimer;
+	j1PerfTimer			delay_timer;
+	int				frame_count = 0;
+	j1Timer				startup_time;
+	j1Timer				frame_time;
+	j1Timer				last_sec_frame_time;
+	int				last_sec_frame_count = 0;
+	int				prev_last_sec_frame_count = 0;
+	int					frame_rate = 60;
+	float dt=0;
 
 
 	const float gravity = 600.0f;         // pixels / second^2
-	const float deltaTime = 1.0f / 30.0f; // More or less 60 frames per second
+	//const float deltaTime = 1.0f / 30.0f; // More or less 60 frames per second
 
 	while (exitApplication != 1)
 	{
 		PreUpdate(); // Updates events
 
+		
 
+		//Frame calculation
+		frame_count++;
+		last_sec_frame_count++;
+		dt = frame_time.ReadSec();
+		frame_time.Start(); //Restart the single frame time
+		
 		/* Draw the screen */
 		SDL_Rect rect;
 		rect.x = 0;
@@ -72,20 +97,50 @@ int main(int argc, char* argv[])
 		rect.h = 1080;
 		Blit(texScreen, -500, 0, &rect);
 
-		// Apply gravity
-		// TODO 1: Update ball position based on the current position, the current velocity, the acceleration (gravity) and the time passed (deltaTime)
-		// TODO 2: Update ball velocity based on the current velocity, the acceleration (gravity) and the time passed (deltaTime)
+		//Verlet
+		Verlet(&ball_p, &tmp, force, dt);
 
-		// Ball touched the floor
-		if (ball.y >= 350)
-		{	
-			// TODO 3: If the floor was reached, do something, stop the ball, make it bounce...
+		if (ball_p.pos.y > 700)
+		{
+			ball_p.speed.y = -ball_p.speed.y * 0.8;
+			ball_p.pos.y = 700;
+		}
+		if (ball_p.pos.x > 1000)
+		{
+			ball_p.speed.x = -ball_p.speed.x * 0.8;
+			ball_p.pos.x = 1000;
+		}
+		if (ball_p.pos.x < 0)
+		{
+			ball_p.speed.x = -ball_p.speed.x * 0.8;
+			ball_p.pos.x = 0;
 		}
 
 		/* Draw the ball */
-		Blit(ball.tex, ball.x, ball.y, &ball.rect);
+		Blit(ball.tex, ball_p.pos.x, ball_p.pos.y, &ball.rect);
 
 		PostUpdate(); // Presents the screen
+
+		//Frame Calculation
+		if (last_sec_frame_time.Read() > 1000)
+		{
+			LOG("%d", last_sec_frame_count);
+
+			last_sec_frame_time.Start();
+			prev_last_sec_frame_count = last_sec_frame_count;
+			last_sec_frame_count = 0;
+		}
+
+		//SDL_Delay
+		if (frame_rate != 0)
+		{
+			if (1000 / frame_rate > frame_time.Read())
+			{
+
+				SDL_Delay((1000 / frame_rate) - frame_time.Read());
+
+			}
+		}
 	}
 
 	// Unload textures

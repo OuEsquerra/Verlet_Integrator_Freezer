@@ -1,5 +1,7 @@
 #include "sdl_functions.h"
 #include "Log.h"
+#include "j1PerfTimer.h"
+#include "j1Timer.h"
 
 #include "SDL/include/SDL.h"
 #include "SDL_image/include/SDL_image.h"
@@ -27,6 +29,9 @@ SDL_Surface* screen_surface = nullptr;
 SDL_Renderer* renderer = nullptr;
 
 #define MAX_KEYS 300
+
+
+
 
 enum KEY_STATE
 {
@@ -103,9 +108,6 @@ int Init()
 
 	SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT); //Uncomment to have fullscreen
 
-
-
-
 	LOG("Init SDL input event system");
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
@@ -113,9 +115,6 @@ int Init()
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return 0;
 	}
-
-
-
 
 	LOG("Init Image library");
 
@@ -128,7 +127,6 @@ int Init()
 		LOG("Could not initialize Image lib. IMG_Init: %s", IMG_GetError());
 		return 0;
 	}
-
 
 	return 1;
 }
@@ -166,6 +164,7 @@ void PreUpdate()
 
 	if (keyboard[SDL_SCANCODE_ESCAPE])
 		exitApplication = 1;
+
 }
 
 void PostUpdate()
