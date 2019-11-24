@@ -36,7 +36,17 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	
+	//FPS variables
+	j1PerfTimer		ptimer;
+	j1PerfTimer		delay_timer;
+	int				frame_count = 0;
+	j1Timer			startup_time;
+	j1Timer			frame_time;
+	j1Timer			last_sec_frame_time;
+	int				last_sec_frame_count = 0;
+	int				prev_last_sec_frame_count = 0;
+	int				frame_rate = 60;
+	float			dt = 0;
 
 	// Load a texture
 	SDL_Texture *texScreen = LoadTexture("Assets/Screens/spacee.png");
@@ -51,43 +61,27 @@ int main(int argc, char* argv[])
 
 	//Ball particle
 	particle ball_p;
-	ball_p.pos.x = 450;
+	ball_p.pos.x = 450; //Starting Position
 	ball_p.pos.y = 100;
-	ball_p.acc.y = 980.0f;
-	ball_p.speed.x = 200.0f;
+	ball_p.acc.y = 980.0f; //Gravity
+	ball_p.speed.x = 200.0f; //Arbitrary acceleration
 
 
 	particle tmp;
 
 	Vec3d force;
 
-	//FPS control
-	j1PerfTimer			ptimer;
-	j1PerfTimer			delay_timer;
-	int				frame_count = 0;
-	j1Timer				startup_time;
-	j1Timer				frame_time;
-	j1Timer				last_sec_frame_time;
-	int				last_sec_frame_count = 0;
-	int				prev_last_sec_frame_count = 0;
-	int					frame_rate = 60;
-	float dt=0;
-
-
-	const float gravity = 600.0f;         // pixels / second^2
-	//const float deltaTime = 1.0f / 30.0f; // More or less 60 frames per second
+	
 
 	while (exitApplication != 1)
 	{
-		PreUpdate(); // Updates events
-
-		
-
 		//Frame calculation
 		frame_count++;
 		last_sec_frame_count++;
 		dt = frame_time.ReadSec();
 		frame_time.Start(); //Restart the single frame time
+
+		PreUpdate(); // Updates events
 		
 		/* Draw the screen */
 		SDL_Rect rect;
@@ -104,6 +98,19 @@ int main(int argc, char* argv[])
 		{
 			ball_p.speed.y = -ball_p.speed.y * 0.8;
 			ball_p.pos.y = 700;
+
+			if (ball_p.speed.x > 10) //Simulated friction
+			{
+				ball_p.speed.x -= 10;
+			}
+			else if(ball_p.speed.x < -10)
+			{
+				ball_p.speed.x += 10;
+			}
+			else if(ball_p.speed.x < 10 || ball_p.speed.x > -10)
+			{
+				ball_p.speed.x = 0;
+			}
 		}
 		if (ball_p.pos.x > 1000)
 		{
@@ -121,13 +128,11 @@ int main(int argc, char* argv[])
 
 		PostUpdate(); // Presents the screen
 
-		//Frame Calculation
+		//Frame Calculation and Delay to achieve desired framerate
 		if (last_sec_frame_time.Read() > 1000)
 		{
 			LOG("%d", last_sec_frame_count);
-
 			last_sec_frame_time.Start();
-			prev_last_sec_frame_count = last_sec_frame_count;
 			last_sec_frame_count = 0;
 		}
 
