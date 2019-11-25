@@ -94,15 +94,32 @@ int main(int argc, char* argv[])
 
 
 		// Apply forces
+
+
+
+
 		force.x = 0;
 		force.y = 980.0f;
 		force.z = 0;
 
+		const Uint8* keys = SDL_GetKeyboardState(NULL);
+		if (keys[SDL_SCANCODE_UP])
+		{
+			ball_p.pos.x = 450; //Starting Position
+			ball_p.pos.y = 200;
+		}
+	
+		if (keys[SDL_SCANCODE_RIGHT])
+		{
+			force.x += 500.0f;
+		}
+		if (keys[SDL_SCANCODE_LEFT])
+		{
+			force.x -= 500.0f;
+		}
 
 
 		//Verlet
-
-
 		Verlet(&ball_p, &ball_p, force, dt);
 
 
