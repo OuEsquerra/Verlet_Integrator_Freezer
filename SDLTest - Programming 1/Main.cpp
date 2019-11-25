@@ -63,11 +63,14 @@ int main(int argc, char* argv[])
 	particle ball_p;
 	ball_p.pos.x = 450; //Starting Position
 	ball_p.pos.y = 200;
-	ball_p.acc.y = 980.0f; //Gravity
+	ball_p.acc.y = 0.0f; //Gravity
 	ball_p.speed.x = 0.0f; //Arbitrary starting speed
-	ball_p.speed.y = -1000.0f;
+	ball_p.speed.y = 0.0f;
+	ball_p.mass = 0.5f;
 
 	particle tmp;
+
+	particle old_state;
 
 	Vec3d force;
 
@@ -89,8 +92,22 @@ int main(int argc, char* argv[])
 		rect.h = 1080;
 		Blit(texScreen, -500, 0, &rect);
 
+
+		// Apply forces
+		force.x = 0;
+		force.y = 98.0f;
+		force.z = 0;
+
+
+
 		//Verlet
-		Verlet(&ball_p, &tmp, force, dt);
+
+
+		Verlet(&ball_p, &ball_p, force, dt);
+
+
+
+
 
 		if (ball_p.pos.y > 700)
 		{
