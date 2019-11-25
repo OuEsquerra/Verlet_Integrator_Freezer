@@ -62,16 +62,14 @@ int main(int argc, char* argv[])
 	//Ball particle
 	particle ball_p;
 	ball_p.pos.x = 450; //Starting Position
-	ball_p.pos.y = 100;
+	ball_p.pos.y = 200;
 	ball_p.acc.y = 980.0f; //Gravity
-	ball_p.speed.x = 200.0f; //Arbitrary acceleration
-
+	ball_p.speed.x = 0.0f; //Arbitrary starting speed
+	ball_p.speed.y = -1000.0f;
 
 	particle tmp;
 
 	Vec3d force;
-
-	
 
 	while (exitApplication != 1)
 	{

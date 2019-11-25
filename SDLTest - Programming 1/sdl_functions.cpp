@@ -30,9 +30,6 @@ SDL_Renderer* renderer = nullptr;
 
 #define MAX_KEYS 300
 
-
-
-
 enum KEY_STATE
 {
 	KEY_IDLE = 0,
@@ -260,7 +257,6 @@ void UnloadTexture(SDL_Texture * texture)
 		SDL_DestroyTexture(texture);
 	}
 }
-
 
 // Blit to screen
 void Blit(SDL_Texture* texture, int x, int y, SDL_Rect* section)
