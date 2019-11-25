@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	ball_p.pos.y = 200;
 	ball_p.acc.y = 0.0f; //Gravity
 	ball_p.speed.x = 0.0f; //Arbitrary starting speed
-	ball_p.speed.y = 10.0f;
+	ball_p.speed.y = 100.0f;
 	ball_p.mass = 0.5f;
 
 	particle tmp;
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
 		// Apply forces
 		force.x = 0;
-		force.y = 98.0f;
+		force.y = 980.0f;
 		force.z = 0;
 
 

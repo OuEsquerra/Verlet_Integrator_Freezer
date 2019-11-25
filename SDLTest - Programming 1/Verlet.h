@@ -26,7 +26,7 @@ void Verlet(particle* prev_part, particle* output_part, Vec3d force, float dt)
 	drag_force.y = 0.5f * 1.225f * prev_part->speed.y * prev_part->speed.y * 3.14159265f / 2.0f * 0.47f * ((prev_part->speed.y < 0) ? 1 : -1) ;
 	drag_force.z = 0.5f * 1.225f * prev_part->speed.z * prev_part->speed.z * 3.14159265f / 2.0f * 0.47f * ((prev_part->speed.z < 0) ? 1 : -1) ;
 
-	drag_force.y = 0.452193f * prev_part->speed.x * prev_part->speed.x * ((prev_part->speed.x < 0) ? 1 : -1);
+	drag_force.y = 0.00452193f * prev_part->speed.y * prev_part->speed.y * ((prev_part->speed.x < 0) ? 1 : -1);
 	
 
 	Vec3d new_acc;
